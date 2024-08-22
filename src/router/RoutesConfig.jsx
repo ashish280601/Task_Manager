@@ -9,7 +9,7 @@ import React from 'react'
 
 const RoutesConfig = () => {
     // const isAuth = status;
-    const isAuth = false;
+    const isAuth = true;
 
     return (
         <Routes>
