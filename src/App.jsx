@@ -1,5 +1,5 @@
-import './App.css'
-import RoutesConfig from './router/RoutesConfig'
+import RoutesConfig from './router/RoutesConfig';
+import "../src/assets/css/style.css";
 
 function App() {
 
