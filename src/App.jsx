@@ -1,14 +1,9 @@
 import './App.css'
+import RoutesConfig from './router/RoutesConfig'
 
 function App() {
 
-  return (
-    <>
-      <div>
-        Hello World!
-      </div>
-    </>
-  )
+  return <RoutesConfig />;
 }
 
 export default App   
