@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { toast } from "react-toastify";
+
+import { addTask } from "../../slice/taskSlice";
 
 const Tasks = () => {
-  const [addTask, setAddTask] = useState({});
-  const navigate = useNavigate();
+  const [inputTask, setInputTask] = useState({});
   const dispatch = useDispatch();
-  const { togglePassword, isLoading } = useSelector((state) => state.auth)
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setAddTask((prev) => ({
+    setInputTask((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -21,11 +19,10 @@ const Tasks = () => {
     e.preventDefault();
     try {
       // write your code logic here.
-      const res = await dispatch(addInstructorData(inputData));
+      const res = await dispatch(addTask(inputTask));
       console.log("res data from add task", res);
-      if (res.payload.data.data.success) {
-        fetchInstructorData();
-        setinputData({});
+      if (res.payload.data.success) {
+        setInputTask({});
         return;
       }
     } catch (error) {
@@ -46,7 +43,7 @@ const Tasks = () => {
                 <div className="position-relative">
                   <input
                     name="title"
-                    value={addTask?.title || ""}
+                    value={inputTask?.title || ""}
                     onChange={handleChange}
                     placeholder="Enter title"
                     type="text"
@@ -62,7 +59,7 @@ const Tasks = () => {
                 <div className="position-relative password_box">
                   <textarea
                     name="description"
-                    value={addTask?.description || ""}
+                    value={inputTask?.description || ""}
                     onChange={handleChange}
                     placeholder="Enter description"
                     type="text"
