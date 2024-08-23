@@ -1,4 +1,12 @@
-routes:
-  - src: /*
-    dest: /index.html
-    status: 200
+services:
+  - type: web
+    name: task-manager-ui
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+    routes:
+      - source: /.*
+        destination: /index.html
