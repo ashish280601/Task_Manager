@@ -7,7 +7,5 @@ export default defineConfig({
   build: {
     outDir: 'dist',
   },
-  server: {
-    historyApiFallback: true,
-  },
+  base: '/', // Ensure this matches your deployment setup
 })
