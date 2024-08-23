@@ -1,18 +1,22 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useState } from "react";
+import hostUrl from "../../../configAPI";
 import { Link, useNavigate } from "react-router-dom";
-
-// import { createSignUp } from "../../slice/authSlice";
+import ReCAPTCHA from "react-google-recaptcha";
+import { useSelector, useDispatch } from "react-redux";
 import loginimg from "../../assets/images/loginimg.png";
-
+import { signUpUser, togglePasswordVisibility } from "../../slice/authSlice";
 import { toast } from "react-toastify";
-function SignUp() {
-  const [SignUp, setSignUp] = useState({});
-  const dispatch = useDispatch();
+
+const SignUp = () => {
+  const [signUp, setSignUp] = useState({});
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // useSelector is used to fetch the data from the store
+  const { togglePassword, isLoading, error } = useSelector((state) => state.auth);
 
   function handleChange(e) {
-    // write your code here
     const { name, value } = e.target;
     setSignUp((prev) => ({
       ...prev,
@@ -20,121 +24,259 @@ function SignUp() {
     }));
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    try {
-      const res = await dispatch(createSignUp(SignUp));
-      console.log("signUp res data", res);
+  function handleRecaptchaToken(token) {
+    setRecaptchaToken(token);
+  }
 
-      if (res.payload.data.status === true) {
-        setSignUp({});
-        navigate("/login");
-        return;
-      } else if (res.payload.data.status === false) {
-        setSignUp({});
-        return;
-      }
-    } catch (err) {
-      console.error("Error during sign up:", err);
-      toast.error(err.message,{
-        position: "bottom-right",
-        autoClose: 3000
-      })
-      addNotification({
-        title: "Error",
-        message: "Something went wrong",
-        native: true,
+  const handleTogglePassword = (field) => {
+    dispatch(togglePasswordVisibility(field));
+  };
+
+  async function handleSignUp(e) {
+    e.preventDefault();
+    if (signUp.name == "" || signUp.email == "" || signUp.password == "") {
+      toast.warning("Please enter all the credential details", {
+        autoClose: 3000,
+        position: "bottom-right"
+      });
+      return;
+    }
+    if (!recaptchaToken) {
+      toast.error("Please verify the reCAPTCHA", {
+        autoClose: 3000,
+        position: "bottom-right"
+      });
+      return;
+    }
+    const userData = {
+      fName: signUp.fName,
+      lName: signUp.lName,
+      email: signUp.email,
+      password: signUp.password,
+      "g-recaptcha-response": recaptchaToken,
+    };
+    try {
+      const res = await dispatch(signUpUser(userData)).unwrap();
+      console.log("Signup component response", res);
+      setSignUp({});
+      toast.success("Account Created Successfully", {
+        autoClose: 3000,
+        position: "bottom-right"
+      });
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      toast.error("Unable to create user account", {
+        autoClose: 3000,
+        position: "bottom-right"
       });
     }
   }
 
+  const handleGoogleAuth = () => {
+    console.log("button click");
+    window.location.href = `${hostUrl}/api/auth/google`;
+  };
+
   return (
     <>
-      <section className="SignUp_sec">
+      <section className="login_sec">
         <div className="container">
-          <div className="row">
-            <div className="col-md-6 right_col">
-              <div className="img_box">
-                <img src={loginimg} alt="de" />
-              </div>
-            </div>
-            <div className="col-md-6 left_col">
-              <form action="post" onSubmit={handleSubmit}>
-                <div className="row">
-                  <div className="col-md-12">
-                    <div className="input_box">
-                      {" "}
-                      <div className="form-group">
-                        <label> Name </label>
+          <div className="row row-eq-height">
+            <div className="col-md-6 left_box">
+              <div className="cardbox">
+                <div className="text-center">
+                  <h5 className="mb-0">Create New Account</h5>
+                  <p className="text-muted mt-2">Get your account now</p>
+                </div>
+                <div className="mt-4">
+                  <form onSubmit={handleSignUp}>
+                    <div className="mb-3">
+                      <label className="form-label" htmlFor="username">
+                        First Name
+                      </label>
+                      <div className="position-relative">
                         <input
+                          name="fName"
+                          value={signUp?.fName || ""}
+                          placeholder="Enter first name"
                           type="text"
-                          name="name"
-                          value={SignUp?.name || ""}
+                          className="form-control bg-light border-light"
                           onChange={handleChange}
-                          className="form-control"
                         />
                       </div>
                     </div>
-                  </div>
-                  <div className="col-md-12">
-                    <div className="input_box">
-                      {" "}
-                      <div className="form-group">
-                        <label> Email </label>
+                    <div className="mb-3">
+                      <label className="form-label" htmlFor="username">
+                        Last Name
+                      </label>
+                      <div className="position-relative">
                         <input
-                          type="email"
+                          name="lName"
+                          value={signUp?.lName || ""}
+                          placeholder="Enter last name"
+                          type="text"
+                          className="form-control bg-light border-light"
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label" htmlFor="username">
+                        Email
+                      </label>
+                      <div className="position-relative">
+                        <input
                           name="email"
-                          value={SignUp?.email || ""}
+                          value={signUp?.email || ""}
+                          placeholder="Enter Email"
+                          type="email"
+                          className="form-control bg-light border-light"
                           onChange={handleChange}
-                          className="form-control"
                         />
                       </div>
                     </div>
-                  </div>
-                  <div className="col-md-12">
-                    <div className="input_box">
-                      {" "}
-                      <div className="form-group">
-                        <label> Password </label>
+                    <div className="mb-3">
+                      <label className="form-label" htmlFor="Password ">
+                        Password
+                      </label>
+                      <div className="position-relative password_box">
                         <input
-                          type="password"
                           name="password"
-                          value={SignUp?.password || ""}
+                          value={signUp?.password || ""}
+                          placeholder="Enter Password"
+                          type={togglePassword.signUpTogglePassword ? "text" : "Password"}
+                          className="form-control bg-light border-light"
                           onChange={handleChange}
-                          className="form-control"
                         />
+                        {togglePassword.signUpTogglePassword ? (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#000000"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            onClick={() => handleTogglePassword("signUpTogglePassword")}
+                          >
+                            <rect
+                              x="3"
+                              y="11"
+                              width="18"
+                              height="11"
+                              rx="2"
+                              ry="2"
+                            ></rect>
+                            <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                          </svg>
+                        ) : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#000000"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            onClick={() => handleTogglePassword("signUpTogglePassword")}
+                          >
+                            <rect
+                              x="3"
+                              y="11"
+                              width="18"
+                              height="11"
+                              rx="2"
+                              ry="2"
+                            ></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                          </svg>
+                        )}
                       </div>
                     </div>
-                  </div>
-                  <div className="col-md-12">
-                    <div className="input_box">
-                      <button
-                        className="btn btn-outline-success "
-                        type="submit"
-                      >
-                        SignUp
+                    <ReCAPTCHA
+                      sitekey="6LfGmucpAAAAABOS1QMm4VHlS4Fvj931VNaSkUp2"
+                      onChange={handleRecaptchaToken}
+                    />
+                    <div className="mt-2">
+                      <button type="submit" className="btn btn-primary w-100">
+                        {isLoading ? (
+                          <h6>SignIn...</h6>
+                        ) : (
+                          "Sign Up"
+                        )}
                       </button>
                     </div>
-                  </div>
-                  <div className="col-md-12">
-                    <div className="input_box" id="submit_btn">
-                      <p>
-                        Already have an account
-                        <Link to="/login" onClick={() => setSignUp({})}>
-                          {" "}
-                          login
-                        </Link>
-                      </p>
+                  </form>
+                  <div className="mt-4 text-center">
+                    <div className="signin-other-title">
+                      <h5 className="fs-15 mb-3 title">Create account with</h5>
                     </div>
+                    <ul className="list-inline">
+                      <li className="list-inline-item">
+                        <Link
+                          className="social-list-item text-white"
+                          href="#"
+                          style={{ color: "white" }}
+                          onClick={handleGoogleAuth}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            x="0px"
+                            y="0px"
+                            width="100"
+                            height="100"
+                            viewBox="0 0 48 48"
+                          >
+                            <path
+                              fill="#FFC107"
+                              d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"
+                            ></path>
+                            <path
+                              fill="#FF3D00"
+                              d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
+                            ></path>
+                            <path
+                              fill="#4CAF50"
+                              d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"
+                            ></path>
+                            <path
+                              fill="#1976D2"
+                              d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
+                            ></path>
+                          </svg>
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="mt-4 text-center">
+                    <p className="mb-0">
+                      Don't have an account?{" "}
+                      <Link
+                        className="fw-medium text-primary text-decoration-underline"
+                        to="/login"
+                      >
+                        SignIn
+                      </Link>
+                    </p>
                   </div>
                 </div>
-              </form>
+              </div>
+            </div>
+            <div className="col-md-6 right_box">
+              <div className="img_box">
+                <img src={loginimg} alt="loginimg" />
+              </div>
             </div>
           </div>
         </div>
       </section>
     </>
   );
-}
+};
 
 export default SignUp;
