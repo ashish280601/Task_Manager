@@ -98,48 +98,11 @@ function Dashboard() {
                   >
                     <ul className="navbar-nav">
                       <li
-                        className={`nav-item list_nav ${activeNavItem === "student" ? "active" : ""
+                        className={`nav-item list_nav ${activeNavItem === "Forget Password" ? "active" : ""
                           }`}
                       >
-                        <Link className="nav-link" to={"/student"}>
-                          Student
-                        </Link>
-                      </li>
-                      <li
-                        className={`nav-item list_nav ${activeNavItem === "company" ? "active" : ""
-                          }`}
-                      >
-                        <Link
-                          className="nav-link"
-                          to="/company"
-                          onClick={() => handleItemClick("company")}
-                        >
-                          Job Posting
-                        </Link>
-                      </li>
-
-                      <li
-                        className={`nav-item list_nav ${activeNavItem === "interview" ? "active" : ""
-                          }`}
-                      >
-                        <Link
-                          className="nav-link"
-                          to="/interview"
-                          onClick={() => handleItemClick("interview")}
-                        >
-                          Schedule Interview
-                        </Link>
-                      </li>
-                      <li
-                        className={`nav-item list_nav ${activeNavItem === "interviewResult" ? "active" : ""
-                          }`}
-                      >
-                        <Link
-                          className="nav-link"
-                          to="/interviewResult"
-                          onClick={() => handleItemClick("interviewResult")}
-                        >
-                          Interview Result
+                        <Link className="nav-link" to={"/forget-password"}>
+                          Forget Password
                         </Link>
                       </li>
                       <li
