@@ -8,5 +8,6 @@ services:
       - key: NODE_ENV
         value: production
     routes:
-      - source: /.*
+      - source: /*
         destination: /index.html
+        status: 200
