@@ -13,8 +13,7 @@ const RoutesConfig = () => {
     const [toggleAuth, setToggleAuth] = useState(true);
     const { isSession } = useSelector((state) => state.auth);
     // const isAuthenticated = isSession.status || toggleAuth;
-       const isAuthenticated = isSession.success;       ;
-
+       const isAuthenticated = isSession.success;
     console.log("isAuthenticated", isAuthenticated);
 
     return (

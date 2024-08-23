@@ -58,7 +58,7 @@ const SignIn = ({ onToggleAuth }) => {
     } catch (error) {
       console.error("Error while login", error); -
         toast.error("Unauthorized User");
-      window.location.reload();
+      // window.location.reload();
     }
   };
 
@@ -206,9 +206,9 @@ const SignIn = ({ onToggleAuth }) => {
                   <div className="mt-2">
                     <button type="submit" className="btn btn-primary w-100">
                       {isLoading ? (
-                        <h6>SignIn...</h6>
+                        "SignIn..."
                       ) : (
-                        "Sign In"
+                        "SignIn"
                       )}
                     </button>
                   </div>

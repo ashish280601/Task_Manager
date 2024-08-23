@@ -205,9 +205,9 @@ const SignUp = () => {
                     <div className="mt-2">
                       <button type="submit" className="btn btn-primary w-100">
                         {isLoading ? (
-                          <h6>SignIn...</h6>
+                          "SignUp..."
                         ) : (
-                          "Sign Up"
+                          "SignUp"
                         )}
                       </button>
                     </div>
