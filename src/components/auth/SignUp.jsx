@@ -80,7 +80,77 @@ const SignUp = () => {
 
   return (
     <>
-      <section className="login_sec">
+      <section>
+        <div className="login-container">
+          <div className="login-box">
+            <h2>SignUp</h2>
+            <form onSubmit={handleSignUp}>
+            <input type="text" placeholder="First Name" name="fName" value={signUp?.fName || ""} onChange={handleChange} className="input-field" />
+            <input type="text" placeholder="Last Name" name="lName" value={signUp?.lName || ""} onChange={handleChange} className="input-field" />
+            <input type="email" placeholder="Email" name="email" value={signUp?.email || ""} onChange={handleChange} className="input-field" />
+              <input type={togglePassword.loginTogglePassword ? "text" : "Password"} placeholder="Password" name="password" value={signUp?.password || ""} onChange={handleChange} className="input-field" />
+              <input type={togglePassword.loginTogglePassword ? "text" : "Password"} placeholder="Confirm Password" name="confirmPassword" value={signUp?.confirmPassword || ""} onChange={handleChange} className="input-field" />
+              {togglePassword.loginTogglePassword ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#000000"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  onClick={() => handleTogglePassword("loginTogglePassword")}
+                >
+                  <rect
+                    x="3"
+                    y="11"
+                    width="18"
+                    height="11"
+                    rx="2"
+                    ry="2"
+                  ></rect>
+                  <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#000000"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  onClick={() => handleTogglePassword("loginTogglePassword")}
+                >
+                  <rect
+                    x="3"
+                    y="11"
+                    width="18"
+                    height="11"
+                    rx="2"
+                    ry="2"
+                  ></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              )}
+              <ReCAPTCHA
+                sitekey="6LfGmucpAAAAABOS1QMm4VHlS4Fvj931VNaSkUp2"
+                onChange={handleRecaptchaToken}
+              />
+              <button type="submit" className="login-button">Signup</button>
+            </form>
+            <p>
+              Don't have an account? <Link to="/login" className="signup-link">Login</Link>
+            </p>
+            <button className="google-login">Login with Google</button>
+          </div>
+        </div>
+      </section>
+      {/* <section className="login_sec">
         <div className="container">
           <div className="row row-eq-height">
             <div className="col-md-6 left_box">
@@ -274,7 +344,7 @@ const SignUp = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
     </>
   );
 };

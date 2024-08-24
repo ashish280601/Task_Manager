@@ -156,7 +156,7 @@ const SignIn = ({ onToggleAuth }) => {
             <button type="submit" className="login-button">Login</button>
           </form>
           <p>
-            Don't have an account? <a href="/signup" className="signup-link">Signup</a>
+            Don't have an account? <Link to="/signup" className="signup-link">Signup</Link>
           </p>
           <button className="google-login">Login with Google</button>
         </div>

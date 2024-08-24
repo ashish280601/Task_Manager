@@ -1,33 +1,42 @@
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 10px 20px;
-    background-color: #1976d2; /* Blue color */
-  }
-  
-  .logo img {
-    width: 40px; /* Adjust as needed */
-    height: auto;
-  }
-  
-  .nav-links {
-    display: flex;
-    gap: 10px;
-  }
-  
-  .nav-button {
-    background-color: transparent;
-    border: none;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    padding: 8px 16px;
-  }
-  
-  .nav-button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-  }
-  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #0056b3; /* Dark background color for the navbar */
+  color: #fff; /* White text color */
+}
+
+.logo img {
+  height: 40px; /* Adjust based on your logo size */
+}
+
+.nav-links {
+  display: flex;
+  gap: 15px; /* Space between buttons */
+}
+
+.nav-button {
+  background-color: white; /* Blue background color */
+  color: #0056b3; /* White text color */
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.nav-button:hover {
+  background-color: rgb(238, 234, 234); /* Darker blue for hover effect */
+  transform: scale(1.05); /* Slightly increase button size on hover */
+}
+
+.nav-button a {
+  text-decoration: none;
+  color: #0056b3; /* Ensure the link text color is white */
+}
+
+.nav-button a:hover {
+  text-decoration: underline; /* Underline link text on hover */
+}

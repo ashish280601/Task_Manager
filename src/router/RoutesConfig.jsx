@@ -10,6 +10,11 @@ import Navbar from "../components/navbar/Navbar";
 
 import React from 'react';
 
+// ProtectedRoute Component
+const ProtectedRoute = ({ element, isAuthenticated }) => {
+    return isAuthenticated ? element : <Navigate to="/login" />;
+};
+
 const RoutesConfig = () => {
     const [toggleAuth, setToggleAuth] = useState(true);
     const { isSession } = useSelector((state) => state.auth);
@@ -18,14 +23,13 @@ const RoutesConfig = () => {
 
     return (
         <React.Fragment>
-            {/* Move Navbar outside of the Routes */}
-            <Navbar />
+
+            <Navbar isAuthenticated={isAuthenticated}  />
             <Routes>
                 <Route path="/signup" element={<SignUp />} />
-                <Route path="/login" element={<SignIn onToggleAuth={setToggleAuth}/>} />
-                <Route path="/" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}>
-                    <Route path="task" element={<Tasks />} />
-                </Route>
+                <Route path="/login" element={<SignIn onToggleAuth={setToggleAuth} />} />
+                <Route path="/task" element={<ProtectedRoute element={<Tasks />} isAuthenticated={isAuthenticated} />} />
+                <Route path="/" element={<Navigate to={isAuthenticated ? "/task" : "/login"} />} />
             </Routes>
         </React.Fragment>
     );
