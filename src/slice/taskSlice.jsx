@@ -3,7 +3,7 @@ import { axiosInstance } from "../../configAPI";
 import { toast } from "react-toastify";
 
 const userData = JSON.parse(sessionStorage.getItem("userData"));
-const token = userData.token;
+const token = userData?.token;
 console.log("token", token);
 
 export const addTask = createAsyncThunk(

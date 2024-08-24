@@ -1,0 +1,33 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #1976d2; /* Blue color */
+  }
+  
+  .logo img {
+    width: 40px; /* Adjust as needed */
+    height: auto;
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .nav-button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 8px 16px;
+  }
+  
+  .nav-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+  
