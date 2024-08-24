@@ -1,8 +1,28 @@
 import React from 'react';
 import './Navbar.css';
-import { Link } from 'react-router-dom';
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar = ({ isAuthenticated }) => {
+  const navigate = useNavigate();
+  
+  const handleSignOut = async () => {
+    try {
+      sessionStorage.clear();
+      toast.success("Logout Successful", {
+        autoClose: 3000,
+        position: "bottom-right"
+      })
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed", error);
+      toast.error("Failed to logout", {
+        position: "bottom-right",
+        autoClose: 3000
+      })
+    }
+  };
   return (
     <div className="navbar">
       <div className="logo">
@@ -15,7 +35,7 @@ const Navbar = ({ isAuthenticated }) => {
             <button className="nav-button">
               <Link to="forget-password">Forget Password</Link>
             </button>
-            <button className="nav-button" style={{backgroundColor:"red"}}>Logout</button>
+            <button className="nav-button" style={{ backgroundColor: "red" }} onClick={handleSignOut}>Logout</button>
           </>
         ) : (
           <>
