@@ -4,7 +4,7 @@ import { addTask } from "../../../slice/taskSlice";
 
 import './TaskModal.css';
 
-const TaskModal = ({ show, handleClose, getData }) => {
+const AddTask = ({ show, handleClose, getData }) => {
     const [modalData, setModalData] = useState({});
     const dispatch = useDispatch();
 
@@ -16,8 +16,7 @@ const TaskModal = ({ show, handleClose, getData }) => {
         }));
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
         try {
             // write your code logic here.
             const res = await dispatch(addTask(modalData));
@@ -25,9 +24,7 @@ const TaskModal = ({ show, handleClose, getData }) => {
             if (res?.payload?.data?.success) {
                 setModalData({});
                 handleClose();
-               setTimeout(() => {
                 getData();
-               },1000)
                 return;
             }
         } catch (error) {
@@ -49,4 +46,4 @@ const TaskModal = ({ show, handleClose, getData }) => {
     );
 };
 
-export default TaskModal;
+export default AddTask;

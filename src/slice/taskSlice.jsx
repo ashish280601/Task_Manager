@@ -58,10 +58,10 @@ export const addTask = createAsyncThunk(
     }
 );
 
-export const updateTaskStatus = createAsyncThunk(
+export const updateTask = createAsyncThunk(
     "update/task",
-    async ({ id, status }, { rejectWithValue }) => {
-        const payload = { status };
+    async ({ id, title, description, status }, { rejectWithValue }) => {
+        const payload = { title, description,status };
         const token = getToken();
         console.log("token", token);
         console.log("payload update", payload);
@@ -130,14 +130,14 @@ const taskSlice = createSlice({
                 state.isLoading = false;
                 state.success = action.payload.data.success;
                 state.message = action.payload.data.message;
-                toast.success(state.message)
+                // toast.success(state.message)
             })
             .addCase(getTask.rejected, (state, action) => {
                 console.log("get task rejected payload", action.payload);
                 state.isLoading = false;
                 state.success = false;
                 state.message = action.payload.data.message || "Unknown error occurred";
-                toast.error(state.message)
+                // toast.error(state.message)
             })
             // add tas section
             .addCase(addTask.pending, (state) => {
@@ -160,19 +160,19 @@ const taskSlice = createSlice({
                 toast.error(state.message)
             })
             // task update section
-            .addCase(updateTaskStatus.pending, (state) => {
+            .addCase(updateTask.pending, (state) => {
                 state.isLoading = true;
                 state.success = false;
                 state.message = "";
             })
-            .addCase(updateTaskStatus.fulfilled, (state, action) => {
+            .addCase(updateTask.fulfilled, (state, action) => {
                 console.log("update task fulfilled", action.payload);
                 state.isLoading = false;
                 state.success = action.payload.data.success;
                 state.message = action.payload.data.message;
                 toast.success(state.message)
             })
-            .addCase(updateTaskStatus.rejected, (state, action) => {
+            .addCase(updateTask.rejected, (state, action) => {
                 console.log("update task rejected payload", action.payload);
                 state.isLoading = false;
                 state.success = false;

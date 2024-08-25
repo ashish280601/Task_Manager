@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { deleteTask, getTask, updateTaskStatus } from "../../slice/taskSlice";
+import { deleteTask, getTask, updateTask } from "../../slice/taskSlice";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import AddTask from "./taskModal/AddTask";
 import ViewTask from "./taskModal/ViewTask";
-import AddModal from "./taskModal/TaskModal";
+import EditTask from "./taskModal/EditTask";
 
 const ItemTypes = {
   TASK: "task",
 };
 
-const DraggableTask = ({ task, index, moveTask, onViewDetails, onDelete }) => {
+const DraggableTask = ({ task, index, moveTask, onViewDetails, onDelete, onUpdate }) => {
   const [, ref] = useDrag({
     type: ItemTypes.TASK,
     item: { id: task._id, index },
@@ -25,7 +26,7 @@ const DraggableTask = ({ task, index, moveTask, onViewDetails, onDelete }) => {
         <button className="view-btn" onClick={() => onViewDetails(task)}>
           View Details
         </button>
-        <button className="edit-btn">Edit</button>
+        <button className="edit-btn" onClick={() => onUpdate(task)}>Edit</button>
         <button className="delete-btn" onClick={() => onDelete(task._id)}>Delete</button>
       </div>
     </div>
@@ -33,7 +34,7 @@ const DraggableTask = ({ task, index, moveTask, onViewDetails, onDelete }) => {
 };
 
 
-const Column = ({ columnId, tasks, moveTask, onViewDetails, onDelete }) => {
+const Column = ({ columnId, tasks, moveTask, onViewDetails, onDelete, onUpdate }) => {
   const [, ref] = useDrop({
     accept: ItemTypes.TASK,
     drop: (item) => moveTask(item.id, columnId),
@@ -50,6 +51,7 @@ const Column = ({ columnId, tasks, moveTask, onViewDetails, onDelete }) => {
           moveTask={(dragIndex, hoverIndex) => moveTask(dragIndex, columnId)}
           onViewDetails={onViewDetails}
           onDelete={onDelete}
+          onUpdate={onUpdate}
         />
       ))}
     </div>
@@ -87,6 +89,11 @@ const Tasks = () => {
   const handleViewDetails = (task) => {
     setSelectedTask(task);
     handleOpen("ViewTask");
+  };
+
+  const handleEdit = (task) => {
+    setSelectedTask(task);
+    handleOpen("editTask");
   };
 
   const fetchData = async () => {
@@ -130,11 +137,9 @@ const Tasks = () => {
     setTaskData(updatedTasks);
 
     try {
-      const res = await dispatch(updateTaskStatus({ id: taskId, status: destinationColumn }));
+      const res = await dispatch(updateTask({ id: taskId, status: destinationColumn }));
       if (res?.payload?.data?.success) {
-        setTimeout(() => {
           fetchData();
-        }, 1000);
       } else {
         console.error("Failed to update task status");
         setTaskData({
@@ -160,9 +165,7 @@ const Tasks = () => {
       try {
         const res = await dispatch(deleteTask(taskId));
         if (res?.payload?.data.success) {
-          setTimeout(() => {
             fetchData();
-          }, 1000);
         } else {
           console.error("Failed to delete task");
         }
@@ -184,7 +187,7 @@ const Tasks = () => {
           <button className="add-task-btn" onClick={() => handleOpen("addTask")}>
             Add Task
           </button>
-          <AddModal show={showModal.addTask} handleClose={() => handleClose("addTask")} getData={fetchData} />
+          <AddTask show={showModal.addTask} handleClose={() => handleClose("addTask")} getData={fetchData} />
           <input
             type="text"
             className="search-input"
@@ -211,6 +214,7 @@ const Tasks = () => {
               moveTask={(taskId) => moveTask(taskId, columnId)}
               onViewDetails={handleViewDetails}
               onDelete={handleDelete}
+              onUpdate={handleEdit}
             />
           ))}
         </div>
@@ -222,6 +226,11 @@ const Tasks = () => {
         description={selectedTask?.description}
         createdAt={selectedTask ? new Date(selectedTask.createdAt).toLocaleDateString() : ""}
       />
+      <EditTask 
+        show={showModal.editTask}
+        handleClose={() => handleClose("editTask")}
+        task={selectedTask}
+        getData={fetchData}/>
     </DndProvider>
   );
 };
