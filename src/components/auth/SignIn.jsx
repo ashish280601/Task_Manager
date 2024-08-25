@@ -41,10 +41,10 @@ const SignIn = ({ onToggleAuth }) => {
       })
       return
     }
-    if (!recaptchaToken) {
-      toast.warning("Please verify the reCAPTCHA");
-      return;
-    }
+    // if (!recaptchaToken) {
+    //   toast.warning("Please verify the reCAPTCHA");
+    //   return;
+    // }
     try {
       const userData = {
         email: auth.email,

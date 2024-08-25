@@ -1,7 +1,7 @@
 import React from 'react';
 import './TaskModal.css';
 
-const TaskModal = ({ show, handleClose, title, description, createdAt }) => {
+const ViewTaskModal = ({ show, handleClose, title, description, createdAt }) => {
     return (
         <div className={`modal ${show ? 'display-block' : 'display-none'}`}>
             <div className="modal-main">
@@ -11,8 +11,8 @@ const TaskModal = ({ show, handleClose, title, description, createdAt }) => {
                 <p><strong>Created at:</strong> {createdAt}</p>
                 <button onClick={handleClose} className="close-btn">Close</button>
             </div>
-        </div>
+        </div>  
     );
 };
 
-export default TaskModal;
+export default ViewTaskModal;

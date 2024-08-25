@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { axiosInstance } from "../../configAPI";
 import { toast } from "react-toastify";
+
+import { axiosInstance } from "../../configAPI";
 
 const userData = JSON.parse(sessionStorage.getItem("userData"));
 const token = userData?.token || null;
@@ -13,10 +14,11 @@ export const getTask = createAsyncThunk(
 
         try {
             // ?searchTitle=${}&&sortBy=${}
-            const res = await axiosInstance.post(`/api/task/all-data`, payload, {
+            const res = await axiosInstance.get("/api/task/all-data", {
+                params: payload,
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`
                 }
             });
             console.log("Task added get", res);
@@ -41,10 +43,33 @@ export const addTask = createAsyncThunk(
                     Authorization: `Bearer ${token}`,
                 }
             });
+            getTask();
             console.log("Task added data", res);
             return res.data
         } catch (error) {
             console.log("Failed to add task", error);
+            return rejectWithValue(error.response ? error.response.data : { message: error.message })
+
+        }
+    }
+);
+
+export const updateTaskStatus = createAsyncThunk(
+    "update/task",
+    async ({ id, status }, { rejectWithValue }) => {
+        const payload = { status };
+        console.log("payload update", payload);
+        try {
+            const res = await axiosInstance.put(`/api/task/update/${id}`, payload, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+            console.log("Task updated data", res);
+            return res.data
+        } catch (error) {
+            console.log("Failed to updat task", error);
             return rejectWithValue(error.response ? error.response.data : { message: error.message })
 
         }
@@ -82,7 +107,7 @@ const taskSlice = createSlice({
                 console.log("get task rejected payload", action.payload);
                 state.isLoading = false;
                 state.success = false;
-                state.message = action.payload.data.message || "Unknown error occurred";
+                state.message = action.payload.message || "Unknown error occurred";
                 toast.error(state.message)
             })
             // add tas section
@@ -100,6 +125,26 @@ const taskSlice = createSlice({
             })
             .addCase(addTask.rejected, (state, action) => {
                 console.log("add task rejected payload", action.payload);
+                state.isLoading = false;
+                state.success = false;
+                state.message = action.payload.message || "Unknown error occurred";
+                toast.error(state.message)
+            })
+            // task update section
+            .addCase(updateTaskStatus.pending, (state) => {
+                state.isLoading = true;
+                state.success = false;
+                state.message = "";
+            })
+            .addCase(updateTaskStatus.fulfilled, (state, action) => {
+                console.log("update task fulfilled", action.payload);
+                state.isLoading = false;
+                state.success = action.payload.data.success;
+                state.message = action.payload.data.message;
+                toast.success(state.message)
+            })
+            .addCase(updateTaskStatus.rejected, (state, action) => {
+                console.log("update task rejected payload", action.payload);
                 state.isLoading = false;
                 state.success = false;
                 state.message = action.payload.message || "Unknown error occurred";

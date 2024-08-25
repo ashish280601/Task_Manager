@@ -4,7 +4,7 @@ import { addTask } from "../../../slice/taskSlice";
 
 import './TaskModal.css';
 
-const AddNEdit = ({ show, handleClose, title, description, createdAt }) => {
+const AddModal = ({ show, handleClose, title, description, createdAt }) => {
     const [modalData, setModalData] = useState({});
     const dispatch = useDispatch();
 
@@ -45,4 +45,4 @@ const AddNEdit = ({ show, handleClose, title, description, createdAt }) => {
     );
 };
 
-export default AddNEdit;
+export default AddModal;
