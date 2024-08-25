@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { getTask, updateTaskStatus } from "../../slice/taskSlice";
+import { deleteTask, getTask, updateTaskStatus } from "../../slice/taskSlice";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import ViewTask from "./taskModal/ViewTask";
@@ -10,7 +10,7 @@ const ItemTypes = {
   TASK: "task",
 };
 
-const DraggableTask = ({ task, index, moveTask, onViewDetails }) => {
+const DraggableTask = ({ task, index, moveTask, onViewDetails, onDelete }) => {
   const [, ref] = useDrag({
     type: ItemTypes.TASK,
     item: { id: task._id, index },
@@ -26,14 +26,14 @@ const DraggableTask = ({ task, index, moveTask, onViewDetails }) => {
           View Details
         </button>
         <button className="edit-btn">Edit</button>
-        <button className="delete-btn">Delete</button>
+        <button className="delete-btn" onClick={() => onDelete(task._id)}>Delete</button>
       </div>
     </div>
   );
 };
 
 
-const Column = ({ columnId, tasks, moveTask, onViewDetails }) => {
+const Column = ({ columnId, tasks, moveTask, onViewDetails, onDelete }) => {
   const [, ref] = useDrop({
     accept: ItemTypes.TASK,
     drop: (item) => moveTask(item.id, columnId),
@@ -49,6 +49,7 @@ const Column = ({ columnId, tasks, moveTask, onViewDetails }) => {
           index={index}
           moveTask={(dragIndex, hoverIndex) => moveTask(dragIndex, columnId)}
           onViewDetails={onViewDetails}
+          onDelete={onDelete}
         />
       ))}
     </div>
@@ -70,6 +71,8 @@ const Tasks = () => {
   });
 
   const [selectedTask, setSelectedTask] = useState(null);
+  const [searchTitle, setSearchTitle] = useState("");
+  const [sortBy, setSortBy] = useState("recent");
 
   const dispatch = useDispatch();
 
@@ -88,7 +91,7 @@ const Tasks = () => {
 
   const fetchData = async () => {
     try {
-      const res = await dispatch(getTask({}));
+      const res = await dispatch(getTask({ searchTitle, sortBy }));
       if (res?.payload?.data?.success) {
         const allTasks = res?.payload?.data?.tasks;
 
@@ -150,9 +153,29 @@ const Tasks = () => {
     }
   };
 
+  const handleDelete = async (taskId) => {
+    // Confirm the deletion
+    const isConfirmed = window.confirm("Are you sure you want to delete this task?");
+    if (isConfirmed) {
+      try {
+        const res = await dispatch(deleteTask(taskId));
+        if (res?.payload?.data.success) {
+          setTimeout(() => {
+            fetchData();
+          }, 1000);
+        } else {
+          console.error("Failed to delete task");
+        }
+      } catch (error) {
+        console.error("Error while deleting task", error);
+      }
+    }
+  };
+
+
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [sortBy, searchTitle]);
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -162,8 +185,18 @@ const Tasks = () => {
             Add Task
           </button>
           <AddModal show={showModal.addTask} handleClose={() => handleClose("addTask")} getData={fetchData} />
-          <input type="text" className="search-input" placeholder="Search..." />
-          <select className="sort-select">
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search..."
+            value={searchTitle}
+            onChange={(e) => setSearchTitle(e.target.value)}
+          />
+          <select 
+            className="sort-select" 
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
             <option value="recent">Sort by: Recent</option>
             <option value="oldest">Sort by: Oldest</option>
           </select>
@@ -177,6 +210,7 @@ const Tasks = () => {
               tasks={taskData[columnId]}
               moveTask={(taskId) => moveTask(taskId, columnId)}
               onViewDetails={handleViewDetails}
+              onDelete={handleDelete}
             />
           ))}
         </div>

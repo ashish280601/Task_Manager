@@ -3,22 +3,24 @@ import { toast } from "react-toastify";
 
 import { axiosInstance } from "../../configAPI";
 
-const userData = JSON.parse(sessionStorage.getItem("userData"));
-const token = userData?.token || null;
-console.log("token", token);
-
+function getToken(){
+    const userData = JSON.parse(sessionStorage.getItem("userData"));
+    return userData.token
+}
 export const getTask = createAsyncThunk(
     "get/task",
-    async (payload, { rejectWithValue }) => {
-        console.log("payload get", payload);
-
+    async ({ searchTitle, sortBy }, { rejectWithValue }) => {
+        const token = getToken();
+        console.log("token", token);
         try {
             // ?searchTitle=${}&&sortBy=${}
-            const res = await axiosInstance.get("/api/task/all-data", {
-                params: payload,
+            const res = await axiosInstance.get(`/api/task/all-data`, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`
+                },params: {
+                    searchTitle,  
+                    sortBy        
                 }
             });
             console.log("Task added get", res);
@@ -34,6 +36,8 @@ export const getTask = createAsyncThunk(
 export const addTask = createAsyncThunk(
     "add/task",
     async (payload, { rejectWithValue }) => {
+        const token = getToken();
+        console.log("token", token);
         console.log("payload add", payload);
 
         try {
@@ -58,9 +62,34 @@ export const updateTaskStatus = createAsyncThunk(
     "update/task",
     async ({ id, status }, { rejectWithValue }) => {
         const payload = { status };
+        const token = getToken();
+        console.log("token", token);
         console.log("payload update", payload);
         try {
             const res = await axiosInstance.put(`/api/task/update/${id}`, payload, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+            console.log("Task updated data", res);
+            return res.data
+        } catch (error) {
+            console.log("Failed to updat task", error);
+            return rejectWithValue(error.response ? error.response.data : { message: error.message })
+
+        }
+    }
+);
+
+export const deleteTask = createAsyncThunk(
+    "delete/task",
+    async (id, { rejectWithValue }) => {
+        const token = getToken();
+        console.log("token", token);
+        console.log("delete id", id);
+        try {
+            const res = await axiosInstance.delete(`/api/task/delete/${id}`, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
@@ -107,7 +136,7 @@ const taskSlice = createSlice({
                 console.log("get task rejected payload", action.payload);
                 state.isLoading = false;
                 state.success = false;
-                state.message = action.payload.message || "Unknown error occurred";
+                state.message = action.payload.data.message || "Unknown error occurred";
                 toast.error(state.message)
             })
             // add tas section
@@ -144,6 +173,26 @@ const taskSlice = createSlice({
                 toast.success(state.message)
             })
             .addCase(updateTaskStatus.rejected, (state, action) => {
+                console.log("update task rejected payload", action.payload);
+                state.isLoading = false;
+                state.success = false;
+                state.message = action.payload.message || "Unknown error occurred";
+                toast.error(state.message)
+            })
+            // delete task section
+            .addCase(deleteTask.pending, (state) => {
+                state.isLoading = true;
+                state.success = false;
+                state.message = "";
+            })
+            .addCase(deleteTask.fulfilled, (state, action) => {
+                console.log("update task fulfilled", action.payload);
+                state.isLoading = false;
+                state.success = action.payload.data.success;
+                state.message = action.payload.data.message;
+                toast.success(state.message)
+            })
+            .addCase(deleteTask.rejected, (state, action) => {
                 console.log("update task rejected payload", action.payload);
                 state.isLoading = false;
                 state.success = false;
