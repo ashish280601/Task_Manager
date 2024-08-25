@@ -10,10 +10,10 @@ import { toast } from "react-toastify";
 const SignUp = () => {
   const [signUp, setSignUp] = useState({});
   const [recaptchaToken, setRecaptchaToken] = useState(null);
+  const [profileImage, setProfileImage] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // useSelector is used to fetch the data from the store
   const { togglePassword, isLoading, error } = useSelector((state) => state.auth);
 
   function handleChange(e) {
@@ -34,7 +34,7 @@ const SignUp = () => {
 
   async function handleSignUp(e) {
     e.preventDefault();
-    if (signUp.name == "" || signUp.email == "" || signUp.password == "") {
+    if (signUp.name === "" || signUp.email === "" || signUp.password === "") {
       toast.warning("Please enter all the credential details", {
         autoClose: 3000,
         position: "bottom-right"
@@ -53,12 +53,14 @@ const SignUp = () => {
       lName: signUp.lName,
       email: signUp.email,
       password: signUp.password,
+      profileImage,
       "g-recaptcha-response": recaptchaToken,
     };
     try {
       const res = await dispatch(signUpUser(userData)).unwrap();
       console.log("Signup component response", res);
       setSignUp({});
+      setProfileImage(null);
       toast.success("Account Created Successfully", {
         autoClose: 3000,
         position: "bottom-right"
@@ -73,8 +75,14 @@ const SignUp = () => {
     }
   }
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProfileImage(URL.createObjectURL(file));
+    }
+  };
+
   const handleGoogleAuth = () => {
-    console.log("button click");
     window.location.href = `${hostUrl}/api/auth/google`;
   };
 
@@ -84,13 +92,16 @@ const SignUp = () => {
         <div className="login-container">
           <div className="login-box">
             <h2>SignUp</h2>
+            <div className="profile-photo">
+              <img src={profileImage || "https://via.placeholder.com/100?text=User+Photo"} alt="User" />
+              <input type="file" accept="image/*" onChange={handleImageChange} />
+            </div>
             <form onSubmit={handleSignUp}>
-            <input type="text" placeholder="First Name" name="fName" value={signUp?.fName || ""} onChange={handleChange} className="input-field" />
-            <input type="text" placeholder="Last Name" name="lName" value={signUp?.lName || ""} onChange={handleChange} className="input-field" />
-            <input type="email" placeholder="Email" name="email" value={signUp?.email || ""} onChange={handleChange} className="input-field" />
-              <input type={togglePassword.loginTogglePassword ? "text" : "Password"} placeholder="Password" name="password" value={signUp?.password || ""} onChange={handleChange} className="input-field" />
-              <input type={togglePassword.loginTogglePassword ? "text" : "Password"} placeholder="Confirm Password" name="confirmPassword" value={signUp?.confirmPassword || ""} onChange={handleChange} className="input-field" />
-              {togglePassword.loginTogglePassword ? (
+              <input type="text" placeholder="First Name" name="fName" value={signUp?.fName || ""} onChange={handleChange} className="input-field" />
+              <input type="text" placeholder="Last Name" name="lName" value={signUp?.lName || ""} onChange={handleChange} className="input-field" />
+              <input type="email" placeholder="Email" name="email" value={signUp?.email || ""} onChange={handleChange} className="input-field" />
+              <div className="password-container">
+                <input type={togglePassword.loginTogglePassword ? "text" : "password"} placeholder="Password" name="password" value={signUp?.password || ""} onChange={handleChange} className="input-field password-field" />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -102,18 +113,14 @@ const SignUp = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   onClick={() => handleTogglePassword("loginTogglePassword")}
+                  className="password-toggle-icon"
                 >
-                  <rect
-                    x="3"
-                    y="11"
-                    width="18"
-                    height="11"
-                    rx="2"
-                    ry="2"
-                  ></rect>
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                   <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
                 </svg>
-              ) : (
+              </div>
+              <div className="password-container">
+                <input type={togglePassword.loginTogglePassword ? "text" : "password"} placeholder="Confirm Password" name="confirmPassword" value={signUp?.confirmPassword || ""} onChange={handleChange} className="input-field password-field" />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -125,226 +132,25 @@ const SignUp = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   onClick={() => handleTogglePassword("loginTogglePassword")}
+                  className="password-toggle-icon"
                 >
-                  <rect
-                    x="3"
-                    y="11"
-                    width="18"
-                    height="11"
-                    rx="2"
-                    ry="2"
-                  ></rect>
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                   <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                 </svg>
-              )}
+              </div>
               <ReCAPTCHA
                 sitekey="6LfGmucpAAAAABOS1QMm4VHlS4Fvj931VNaSkUp2"
                 onChange={handleRecaptchaToken}
               />
-              <button type="submit" className="login-button">Signup</button>
+              <button type="submit" className="login-button" onClick={() => setSignUp({})}>Signup</button>
             </form>
             <p>
               Don't have an account? <Link to="/login" className="signup-link">Login</Link>
             </p>
-            <button className="google-login">Login with Google</button>
+            <button className="google-login" onClick={handleGoogleAuth}>Login with Google</button>
           </div>
         </div>
       </section>
-      {/* <section className="login_sec">
-        <div className="container">
-          <div className="row row-eq-height">
-            <div className="col-md-6 left_box">
-              <div className="cardbox">
-                <div className="text-center">
-                  <h5 className="mb-0">Create New Account</h5>
-                  <p className="text-muted mt-2">Get your account now</p>
-                </div>
-                <div className="mt-4">
-                  <form onSubmit={handleSignUp}>
-                    <div className="mb-3">
-                      <label className="form-label" htmlFor="username">
-                        First Name
-                      </label>
-                      <div className="position-relative">
-                        <input
-                          name="fName"
-                          value={signUp?.fName || ""}
-                          placeholder="Enter first name"
-                          type="text"
-                          className="form-control bg-light border-light"
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="mb-3">
-                      <label className="form-label" htmlFor="username">
-                        Last Name
-                      </label>
-                      <div className="position-relative">
-                        <input
-                          name="lName"
-                          value={signUp?.lName || ""}
-                          placeholder="Enter last name"
-                          type="text"
-                          className="form-control bg-light border-light"
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="mb-3">
-                      <label className="form-label" htmlFor="username">
-                        Email
-                      </label>
-                      <div className="position-relative">
-                        <input
-                          name="email"
-                          value={signUp?.email || ""}
-                          placeholder="Enter Email"
-                          type="email"
-                          className="form-control bg-light border-light"
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="mb-3">
-                      <label className="form-label" htmlFor="Password ">
-                        Password
-                      </label>
-                      <div className="position-relative password_box">
-                        <input
-                          name="password"
-                          value={signUp?.password || ""}
-                          placeholder="Enter Password"
-                          type={togglePassword.signUpTogglePassword ? "text" : "Password"}
-                          className="form-control bg-light border-light"
-                          onChange={handleChange}
-                        />
-                        {togglePassword.signUpTogglePassword ? (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="#000000"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            onClick={() => handleTogglePassword("signUpTogglePassword")}
-                          >
-                            <rect
-                              x="3"
-                              y="11"
-                              width="18"
-                              height="11"
-                              rx="2"
-                              ry="2"
-                            ></rect>
-                            <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
-                          </svg>
-                        ) : (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="#000000"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            onClick={() => handleTogglePassword("signUpTogglePassword")}
-                          >
-                            <rect
-                              x="3"
-                              y="11"
-                              width="18"
-                              height="11"
-                              rx="2"
-                              ry="2"
-                            ></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                          </svg>
-                        )}
-                      </div>
-                    </div>
-                    <ReCAPTCHA
-                      sitekey="6LfGmucpAAAAABOS1QMm4VHlS4Fvj931VNaSkUp2"
-                      onChange={handleRecaptchaToken}
-                    />
-                    <div className="mt-2">
-                      <button type="submit" className="btn btn-primary w-100">
-                        {isLoading ? (
-                          "SignUp..."
-                        ) : (
-                          "SignUp"
-                        )}
-                      </button>
-                    </div>
-                  </form>
-                  <div className="mt-4 text-center">
-                    <div className="signin-other-title">
-                      <h5 className="fs-15 mb-3 title">Create account with</h5>
-                    </div>
-                    <ul className="list-inline">
-                      <li className="list-inline-item">
-                        <Link
-                          className="social-list-item text-white"
-                          href="#"
-                          style={{ color: "white" }}
-                          onClick={handleGoogleAuth}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            x="0px"
-                            y="0px"
-                            width="100"
-                            height="100"
-                            viewBox="0 0 48 48"
-                          >
-                            <path
-                              fill="#FFC107"
-                              d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"
-                            ></path>
-                            <path
-                              fill="#FF3D00"
-                              d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
-                            ></path>
-                            <path
-                              fill="#4CAF50"
-                              d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"
-                            ></path>
-                            <path
-                              fill="#1976D2"
-                              d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
-                            ></path>
-                          </svg>
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="mt-4 text-center">
-                    <p className="mb-0">
-                      Don't have an account?{" "}
-                      <Link
-                        className="fw-medium text-primary text-decoration-underline"
-                        to="/login"
-                      >
-                        SignIn
-                      </Link>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 right_box">
-              <div className="img_box">
-                <img src={loginimg} alt="loginimg" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section> */}
     </>
   );
 };

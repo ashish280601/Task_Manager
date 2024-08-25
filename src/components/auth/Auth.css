@@ -1,112 +1,167 @@
 /* General Styling */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-  }
-  
-  /* Container */
-  .login-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-  }
-  
-  /* Navbar */
-  .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 10px 20px;
-    background-color: #1976d2; /* Blue color */
-  }
-  
-  .logo img {
-    width: 40px; /* Adjust as needed */
-    height: auto;
-  }
-  
-  .nav-links {
-    display: flex;
-    gap: 10px;
-  }
-  
-  .nav-button {
-    background-color: transparent;
-    border: none;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    padding: 8px 16px;
-  }
-  
-  .nav-button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-  }
-  
-  /* Login Box */
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+/* Container */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* height: 100vh; */
+}
+
+/* Login Box */
+.login-box {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+}
+
+/* Profile Photo */
+.profile-photo {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.profile-photo img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.profile-photo input[type="file"] {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Form Inputs */
+.input-field {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.password-container {
+  position: relative;
+  margin: 10px 0;
+}
+
+.password-field {
+  padding-right: 40px;
+}
+
+.password-toggle-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+/* Buttons */
+.login-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.login-button:hover {
+  background-color: #145ca3;
+}
+
+.google-login {
+  width: 100%;
+  padding: 10px;
+  background-color: #db4437;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.google-login:hover {
+  background-color: #c1351d;
+}
+
+/* Links */
+.signup-link {
+  color: #1976d2;
+  text-decoration: none;
+}
+
+.signup-link:hover {
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .login-box {
-    background-color: white;
-    padding: 30px 40px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: 300px;
+      width: 95%;
+      padding: 15px;
   }
-  
-  h2 {
-    margin-bottom: 20px;
-    color: #1976d2;
+
+  .profile-photo img {
+      width: 80px;
+      height: 80px;
   }
-  
-  .input-field {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+
+  .input-field, .login-button, .google-login {
+      padding: 8px;
   }
-  
-  .login-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #1976d2;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
+
+  .password-field {
+      padding-right: 35px;
   }
-  
-  .login-button:hover {
-    background-color: #145ca3;
+
+  .password-toggle-icon {
+      width: 20px;
+      height: 20px;
   }
-  
-  .signup-link {
-    color: #1976d2;
-    text-decoration: none;
+}
+
+@media (max-width: 480px) {
+  .login-box {
+      width: 100%;
+      padding: 10px;
   }
-  
-  .signup-link:hover {
-    text-decoration: underline;
+
+  .profile-photo img {
+      width: 70px;
+      height: 70px;
   }
-  
-  .google-login {
-    width: 100%;
-    padding: 10px;
-    background-color: #db4437;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
+
+  .input-field, .login-button, .google-login {
+      padding: 6px;
   }
-  
-  .google-login:hover {
-    background-color: #c
-  
+
+  .password-field {
+      padding-right: 30px;
+  }
+
+  .password-toggle-icon {
+      width: 18px;
+      height: 18px;
+  }
+}

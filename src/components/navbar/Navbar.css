@@ -1,3 +1,4 @@
+/* Navbar Container */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -5,20 +6,41 @@
   padding: 10px 20px;
   background-color: #0056b3; /* Dark background color for the navbar */
   color: #fff; /* White text color */
+  flex-wrap: wrap; /* Ensure items wrap on smaller screens */
+  margin-bottom: 20px;
 }
 
+/* Logo */
 .logo img {
   height: 40px; /* Adjust based on your logo size */
 }
 
+/* Nav Links Container */
 .nav-links {
   display: flex;
   gap: 15px; /* Space between buttons */
+  align-items: center; /* Align items vertically centered */
+  flex-wrap: wrap; /* Wrap buttons on smaller screens */
 }
 
+/* User Info Section */
+.user-info {
+  display: flex;
+  align-items: center; /* Center items vertically */
+  gap: 10px; /* Space between image and username */
+}
+
+/* User Image */
+.user-info img {
+  border-radius: 50%; /* Circle the image */
+  height: 30px; /* Adjust based on desired size */
+  width: 30px; /* Ensure image is square */
+}
+
+/* Nav Buttons */
 .nav-button {
   background-color: white; /* Blue background color */
-  color: #0056b3; /* White text color */
+  color: #0056b3; /* Text color */
   border: none;
   border-radius: 5px;
   padding: 10px 15px;
@@ -28,15 +50,32 @@
 }
 
 .nav-button:hover {
-  background-color: rgb(238, 234, 234); /* Darker blue for hover effect */
+  background-color: rgb(238, 234, 234); /* Darker background for hover effect */
   transform: scale(1.05); /* Slightly increase button size on hover */
 }
 
 .nav-button a {
   text-decoration: none;
-  color: #0056b3; /* Ensure the link text color is white */
+  color: #0056b3; /* Ensure the link text color is blue */
 }
 
 .nav-button a:hover {
   text-decoration: underline; /* Underline link text on hover */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .nav-links {
+    flex-direction: column; /* Stack nav items vertically on smaller screens */
+    align-items: flex-start; /* Align items to the start */
+  }
+  
+  .user-info {
+    margin-bottom: 10px; /* Add space below user info */
+  }
+  
+  .logo img {
+    height: 40
+    px; /* Adjust logo size on smaller screens */
+  }
 }

@@ -1,11 +1,16 @@
 import React from 'react';
 import './Navbar.css';
-import { useState } from "react";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar = ({ isAuthenticated }) => {
   const navigate = useNavigate();
+
+  const userInfo = JSON.parse(sessionStorage.getItem("userData"));
+  const userName = userInfo?.name || null;
+  const userImg = userInfo?.userImg || null;
+  console.log("userName", userName);
+  
   
   const handleSignOut = async () => {
     try {
@@ -15,6 +20,7 @@ const Navbar = ({ isAuthenticated }) => {
         position: "bottom-right"
       })
       navigate("/login");
+      window.location.reload(); 
     } catch (error) {
       console.error("Logout failed", error);
       toast.error("Failed to logout", {
@@ -32,6 +38,10 @@ const Navbar = ({ isAuthenticated }) => {
       <div className="nav-links">
         {isAuthenticated ? (
           <>
+            <div className="user-info">
+              <img src={userImg} alt={userName} />
+              <h6>{userName}</h6>
+            </div>
             <button className="nav-button">
               <Link to="forget-password">Forget Password</Link>
             </button>
