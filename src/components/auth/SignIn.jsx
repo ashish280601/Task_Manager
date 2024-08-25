@@ -47,11 +47,11 @@ const SignIn = () => {
       const data = await dispatch(loginUser(userData)).unwrap();
       console.log("Login Successful component message: ", data);
       setAuth({});
-      toast.success("Login Successful");
+      // toast.success("Login Successful");
       navigate("/task");
     } catch (error) {
       console.error("Error while login", error);
-      toast.error("Unauthorized User");
+      // toast.error("Unauthorized User");
     }
   };
 

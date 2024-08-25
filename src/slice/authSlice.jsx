@@ -1,17 +1,23 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-import hostUrl from "../../configAPI";
+import { axiosInstance } from "../../configAPI";
+import { toast } from "react-toastify";
 
 export const signUpUser = createAsyncThunk(
   "signup/signupUser",
-  async (userData, { rejectWithValue }) => {
+  async (formData, { rejectWithValue }) => {
+    console.log("formData", formData);
+
     try {
-      const res = await axios.post(`${hostUrl}/api/user/signup`, userData);
-      console.log("singup successful", res.data);
+      const res = await axiosInstance.post("/api/user/signup", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      });
+      console.log("Signup successful", res.data);
       return res.data;
     } catch (error) {
       console.log("Failed to create account", error);
-      return rejectWithValue(error.res.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -19,13 +25,15 @@ export const signUpUser = createAsyncThunk(
 export const loginUser = createAsyncThunk(
   "/login/loginUser",
   async (userData, { rejectWithValue }) => {
+    console.log("user login data", userData);
+
     try {
-      const res = await axios.post(`${hostUrl}/api/user/login`, userData);
+      const res = await axiosInstance.post("/api/user/login", userData);
       console.log("Login Successful", res.data);
       return res.data;
     } catch (error) {
       console.error("Error while login", error);
-      return rejectWithValue(error.res.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -34,8 +42,8 @@ export const OTPRequests = createAsyncThunk(
   "otp/request",
   async ({ userID, headers }, { rejectWithValue }) => {
     try {
-      const res = await axios.post(
-        `${hostUrl}/api/user/request-reset-password`,
+      const res = await axiosInstance.post(
+        "/api/user/request-reset-password",
         { userID },
         headers
       );
@@ -52,8 +60,8 @@ export const verifyOTP = createAsyncThunk(
   "otp/verify",
   async ({ otp, headers }, { rejectWithValue }) => {
     try {
-      const res = await axios.post(
-        `${hostUrl}/api/user/verify-otp`,
+      const res = await axiosInstance.post(
+        "/api/user/verify-otp",
         { otp },
         headers
       );
@@ -70,8 +78,8 @@ export const resetPassword = createAsyncThunk(
   "forget/forgetPassword",
   async ({ newPassword, token }, { rejectWithValue }) => {
     try {
-      const res = await axios.post(
-        `${hostUrl}/api/user/resetPassword`,
+      const res = await axiosInstance.post(
+        "/api/user/resetPassword",
         { newPassword },
         {
           headers: {
@@ -92,7 +100,7 @@ export const googleAuthSlice = createAsyncThunk(
   'google/auth',
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${hostUrl}/api/user/auth/google`);
+      const res = await axiosInstance.get("/api/user/auth/google");
       console.log('google signIN res', res);
       return res.data;
     } catch (error) {
@@ -100,7 +108,7 @@ export const googleAuthSlice = createAsyncThunk(
       return rejectWithValue(error.response.data);
     }
   }
-);  
+);
 
 const authSlice = createSlice({
   name: "auth",
@@ -111,6 +119,7 @@ const authSlice = createSlice({
     verifyOTP: null,
     resetPassword: null,
     isLoading: false,
+    message: "",
     isSession: JSON.parse(sessionStorage.getItem("userData")) || false,
     togglePassword: {
       loginTogglePassword: false,
@@ -136,26 +145,43 @@ const authSlice = createSlice({
       .addCase(signUpUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
+        if (action?.payload?.success) {
+          state.message = action.payload.message
+          toast.success(state.message);
+        }
       })
       .addCase(signUpUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+        state.message = action.payload.message;
+        toast.error(state.message)
       })
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
+        console.log("login payload", action.payload);
+
         state.isLoading = false;
         state.userLogin = action.payload;
         console.log("actioon payload", action.payload);
         state.isSession = action.payload.data;
         sessionStorage.setItem("userData", JSON.stringify(state.isSession));
         console.log("session data", state.isSession);
+        if (action?.payload?.data?.success) {
+          state.message = action.payload.data.message
+          toast.success(state.message);
+        }
       })
       .addCase(loginUser.rejected, (state, action) => {
+        console.log("login rejected payload", action.payload);
         state.isLoading = false;
         state.error = action.payload;
+        state.message = action?.payload?.message
+        toast.error(state.message);
+        return
+
       })
       .addCase(OTPRequests.pending, (state) => {
         state.isLoading = true;

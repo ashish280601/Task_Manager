@@ -34,11 +34,13 @@ const SignUp = () => {
 
   async function handleSignUp(e) {
     e.preventDefault();
-    if (signUp.name === "" || signUp.email === "" || signUp.password === "") {
-      toast.warning("Please enter all the credential details", {
-        autoClose: 3000,
-        position: "bottom-right"
-      });
+    if (!signUp.fName || !signUp.lName || !signUp.email || !signUp.password || !signUp.confirmPassword) {
+      toast.warning("Please enter all the credential details");
+      return;
+    }
+
+    if (signUp.password !== signUp.confirmPassword) {
+      toast.error("Passwords do not match");
       return;
     }
     if (!recaptchaToken) {
@@ -48,37 +50,32 @@ const SignUp = () => {
       });
       return;
     }
-    const userData = {
-      fName: signUp.fName,
-      lName: signUp.lName,
-      email: signUp.email,
-      password: signUp.password,
-      profileImage,
-      "g-recaptcha-response": recaptchaToken,
-    };
+
+    const formData = new FormData();
+    formData.append("fName", signUp.fName);
+    formData.append("lName", signUp.lName);
+    formData.append("email", signUp.email);
+    formData.append("password", signUp.password);
+    formData.append("image", profileImage);
+    formData.append("g-recaptcha-response", recaptchaToken);
+
     try {
-      const res = await dispatch(signUpUser(userData)).unwrap();
+      const res = await dispatch(signUpUser(formData));
       console.log("Signup component response", res);
-      setSignUp({});
+      if(res?.payload?.success){
+        setSignUp({});
       setProfileImage(null);
-      toast.success("Account Created Successfully", {
-        autoClose: 3000,
-        position: "bottom-right"
-      });
-      navigate("/");
+      navigate("/login");
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Unable to create user account", {
-        autoClose: 3000,
-        position: "bottom-right"
-      });
+      console.error("error while creating user",error.message);
     }
   }
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setProfileImage(URL.createObjectURL(file));
+      setProfileImage(file);
     }
   };
 
@@ -142,10 +139,10 @@ const SignUp = () => {
                 sitekey="6LfGmucpAAAAABOS1QMm4VHlS4Fvj931VNaSkUp2"
                 onChange={handleRecaptchaToken}
               />
-              <button type="submit" className="login-button" onClick={() => setSignUp({})}>Signup</button>
+              <button type="submit" className="login-button">Signup</button>
             </form>
             <p>
-              Don't have an account? <Link to="/login" className="signup-link">Login</Link>
+              Don't have an account? <Link to="/login" className="signup-link" onClick={() => setSignUp({})}>Login</Link>
             </p>
             <button className="google-login" onClick={handleGoogleAuth}>Login with Google</button>
           </div>
