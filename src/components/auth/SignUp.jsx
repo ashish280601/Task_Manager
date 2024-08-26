@@ -3,7 +3,6 @@ import hostUrl from "../../../configAPI";
 import { Link, useNavigate } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useSelector, useDispatch } from "react-redux";
-import loginimg from "../../assets/images/loginimg.png";
 import { signUpUser, togglePasswordVisibility } from "../../slice/authSlice";
 import { toast } from "react-toastify";
 
@@ -98,7 +97,7 @@ const SignUp = () => {
               <input type="text" placeholder="Last Name" name="lName" value={signUp?.lName || ""} onChange={handleChange} className="input-field" />
               <input type="email" placeholder="Email" name="email" value={signUp?.email || ""} onChange={handleChange} className="input-field" />
               <div className="password-container">
-                <input type={togglePassword.loginTogglePassword ? "text" : "password"} placeholder="Password" name="password" value={signUp?.password || ""} onChange={handleChange} className="input-field password-field" />
+                <input type={togglePassword.signUpTogglePassword ? "password" : "text"} placeholder="Password" name="password" value={signUp?.password || ""} onChange={handleChange} className="input-field password-field" />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -109,15 +108,19 @@ const SignUp = () => {
                   strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  onClick={() => handleTogglePassword("loginTogglePassword")}
+                  onClick={() => handleTogglePassword("signUpTogglePassword")}
                   className="password-toggle-icon"
                 >
+                  {togglePassword.signUpTogglePassword ? (
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  ) : (
+                    <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                  )}
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                  <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
                 </svg>
               </div>
               <div className="password-container">
-                <input type={togglePassword.loginTogglePassword ? "text" : "password"} placeholder="Confirm Password" name="confirmPassword" value={signUp?.confirmPassword || ""} onChange={handleChange} className="input-field password-field" />
+                <input type={togglePassword.confirmPassword ? "password" : "text"} placeholder="Confirm Password" name="confirmPassword" value={signUp?.confirmPassword || ""} onChange={handleChange} className="input-field password-field" />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -128,18 +131,24 @@ const SignUp = () => {
                   strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  onClick={() => handleTogglePassword("loginTogglePassword")}
+                  onClick={() => handleTogglePassword("confirmPassword")}
                   className="password-toggle-icon"
                 >
+                  {togglePassword.confirmPassword ? (
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  ) : (
+                    <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                  )}
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                 </svg>
               </div>
               <ReCAPTCHA
                 sitekey="6LfGmucpAAAAABOS1QMm4VHlS4Fvj931VNaSkUp2"
                 onChange={handleRecaptchaToken}
               />
-              <button type="submit" className="login-button">Signup</button>
+              <button type="submit" className="login-button">
+              {isLoading ? "Signing Up..." : "Sign Up"}
+              </button>
             </form>
             <p>
               Don't have an account? <Link to="/login" className="signup-link" onClick={() => setSignUp({})}>Login</Link>

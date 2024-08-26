@@ -38,6 +38,10 @@ const SignIn = () => {
       });
       return;
     }
+    if (!recaptchaToken) {
+      toast.warning("Please verify the reCAPTCHA");
+      return
+    }
     try {
       const userData = {
         email: auth.email,
@@ -71,7 +75,7 @@ const SignIn = () => {
             />
             <div className="password-container">
               <input
-                type={togglePassword ? "text" : "password"}
+                type={togglePassword.loginTogglePassword ? "text" : "password"}
                 placeholder="Password"
                 name="password"
                 value={auth.password || ""}
@@ -91,16 +95,52 @@ const SignIn = () => {
                 onClick={handleTogglePassword}
                 className="password-toggle-icon"
               >
-                {togglePassword ? (
-                  <>
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                    <path d="M7 11V7a5 5 0 0 1 9.9-1" />
-                  </>
+                {togglePassword.loginTogglePassword ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#000000"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    onClick={() => handleTogglePassword("loginTogglePassword")}
+                  >
+                    <rect
+                      x="3"
+                      y="11"
+                      width="18"
+                      height="11"
+                      rx="2"
+                      ry="2"
+                    ></rect>
+                    <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                  </svg>
                 ) : (
-                  <>
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                  </>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#000000"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    onClick={() => handleTogglePassword("loginTogglePassword")}
+                  >
+                    <rect
+                      x="3"
+                      y="11"
+                      width="18"
+                      height="11"
+                      rx="2"
+                      ry="2"
+                    ></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
                 )}
               </svg>
             </div>

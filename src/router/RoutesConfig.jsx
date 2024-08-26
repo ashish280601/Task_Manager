@@ -9,6 +9,8 @@ import Tasks from "../components/tasks/Tasks";
 import Navbar from "../components/navbar/Navbar";
 
 import React from 'react';
+import OTPVerify from "../components/auth/OTPVerify";
+import ForgetPassword from "../components/auth/ForgetPassword";
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ element, isAuthenticated }) => {
@@ -29,6 +31,8 @@ const RoutesConfig = () => {
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/login" element={<SignIn onToggleAuth={setToggleAuth} />} />
                 <Route path="/task" element={<ProtectedRoute element={<Tasks />} isAuthenticated={isAuthenticated} />} />
+                <Route path="/otp-verify" element={<ProtectedRoute element={<OTPVerify/>}isAuthenticated={isAuthenticated} />}/>
+                <Route path="/forgetPassword" element={<ProtectedRoute element={<ForgetPassword/>} isAuthenticated={isAuthenticated}/>}/>
                 <Route path="/" element={<Navigate to={isAuthenticated ? "/task" : "/login"} />} />
             </Routes>
         </React.Fragment>

@@ -2,16 +2,27 @@ import React from 'react';
 import './Navbar.css';
 import { toast } from "react-toastify";
 import { Link, useNavigate } from 'react-router-dom';
+import { OTPRequests } from '../../slice/authSlice';
+import { useDispatch } from 'react-redux';
 
 const Navbar = ({ isAuthenticated }) => {
-  const navigate = useNavigate();
-
   const userInfo = JSON.parse(sessionStorage.getItem("userData"));
+  const userID = userInfo?.userID
+  const dispatch = useDispatch();
   const userName = userInfo?.name || null;
   const userImg = userInfo?.userImg || null;
   console.log("userName", userName);
-  
-  
+
+  const handleOTPRequest = async () => {
+    try {
+      const res = await dispatch(OTPRequests({ userID })).unwrap();
+      console.log("OTP request component", res);
+      // navigate("/otp/verify"); 
+    } catch (error) {
+      console.error("Error while requesting otp verfiy", error);
+    }
+  };
+
   const handleSignOut = async () => {
     try {
       sessionStorage.clear();
@@ -20,7 +31,7 @@ const Navbar = ({ isAuthenticated }) => {
         position: "bottom-right"
       })
       navigate("/login");
-      window.location.reload(); 
+      window.location.reload();
     } catch (error) {
       console.error("Logout failed", error);
       toast.error("Failed to logout", {
@@ -43,7 +54,7 @@ const Navbar = ({ isAuthenticated }) => {
               <h6>{userName}</h6>
             </div>
             <button className="nav-button">
-              <Link to="forget-password">Forget Password</Link>
+              <Link to="/otp-verify" onClick={handleOTPRequest}>Forget Password</Link>
             </button>
             <button className="nav-button" style={{ backgroundColor: "red" }} onClick={handleSignOut}>Logout</button>
           </>

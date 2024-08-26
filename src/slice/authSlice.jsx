@@ -2,6 +2,11 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosInstance } from "../../configAPI";
 import { toast } from "react-toastify";
 
+function getToken() {
+  const userData = JSON.parse(sessionStorage.getItem("userData"));
+  return userData.token
+}
+
 export const signUpUser = createAsyncThunk(
   "signup/signupUser",
   async (formData, { rejectWithValue }) => {
@@ -40,12 +45,17 @@ export const loginUser = createAsyncThunk(
 
 export const OTPRequests = createAsyncThunk(
   "otp/request",
-  async ({ userID, headers }, { rejectWithValue }) => {
+  async ({ userID }, { rejectWithValue }) => {
+    const token = getToken();
+    console.log("token", token);
     try {
       const res = await axiosInstance.post(
-        "/api/user/request-reset-password",
-        { userID },
-        headers
+        "/api/user/request-reset-password", { userID }, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
+      }
       );
       console.log("OTP send successfull to mail", res.data);
       return res.data;
@@ -58,12 +68,18 @@ export const OTPRequests = createAsyncThunk(
 
 export const verifyOTP = createAsyncThunk(
   "otp/verify",
-  async ({ otp, headers }, { rejectWithValue }) => {
+  async ({ otp }, { rejectWithValue }) => {
+    const token = getToken();
+    console.log("token", token);
     try {
       const res = await axiosInstance.post(
         "/api/user/verify-otp",
-        { otp },
-        headers
+        { otp }, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
+      }
       );
       console.log("OTP verify successfull", res.data);
       return res.data;
@@ -76,7 +92,9 @@ export const verifyOTP = createAsyncThunk(
 
 export const resetPassword = createAsyncThunk(
   "forget/forgetPassword",
-  async ({ newPassword, token }, { rejectWithValue }) => {
+  async ({ newPassword }, { rejectWithValue }) => {
+    const token = getToken();
+    console.log("token", token);
     try {
       const res = await axiosInstance.post(
         "/api/user/resetPassword",
