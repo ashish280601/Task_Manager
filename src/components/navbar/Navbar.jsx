@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 
 const Navbar = ({ isAuthenticated }) => {
   const userInfo = JSON.parse(sessionStorage.getItem("userData"));
+  const navigate = useNavigate();
   const userID = userInfo?.userID
   const dispatch = useDispatch();
   const userName = userInfo?.name || null;

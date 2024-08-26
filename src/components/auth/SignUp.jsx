@@ -61,13 +61,13 @@ const SignUp = () => {
     try {
       const res = await dispatch(signUpUser(formData));
       console.log("Signup component response", res);
-      if(res?.payload?.success){
+      if (res?.payload?.success) {
         setSignUp({});
-      setProfileImage(null);
-      navigate("/login");
+        setProfileImage(null);
+        navigate("/login");
       }
     } catch (error) {
-      console.error("error while creating user",error.message);
+      console.error("error while creating user", error.message);
     }
   }
 
@@ -147,7 +147,7 @@ const SignUp = () => {
                 onChange={handleRecaptchaToken}
               />
               <button type="submit" className="login-button">
-              {isLoading ? "Signing Up..." : "Sign Up"}
+                {isLoading ? "Signing Up..." : "Sign Up"}
               </button>
             </form>
             <p>
