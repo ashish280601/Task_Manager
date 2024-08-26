@@ -74,7 +74,7 @@ const SignUp = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setProfileImage(URL.createObjectURL(file));
+      setProfileImage(file);
     }
   };
 
