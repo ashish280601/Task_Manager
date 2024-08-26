@@ -39,8 +39,8 @@
 
 /* Nav Buttons */
 .nav-button {
-  background-color: white; /* Blue background color */
-  color: #0056b3; /* Text color */
+  background-color: #fff; /* White background color */
+  color: #0056b3; /* Blue text color */
   border: none;
   border-radius: 5px;
   padding: 10px 15px;
@@ -50,32 +50,60 @@
 }
 
 .nav-button:hover {
-  background-color: rgb(238, 234, 234); /* Darker background for hover effect */
+  background-color: #e0e0e0; /* Light grey background for hover effect */
   transform: scale(1.05); /* Slightly increase button size on hover */
 }
 
 .nav-button a {
   text-decoration: none;
-  color: #0056b3; /* Ensure the link text color is blue */
+  color: #0056b3; /* Blue text color */
 }
 
 .nav-button a:hover {
   text-decoration: underline; /* Underline link text on hover */
 }
 
+/* Hamburger Menu */
+.hamburger-menu {
+  display: none; /* Hide hamburger menu by default */
+  flex-direction: column;
+  cursor: pointer;
+  gap: 4px;
+}
+
+.hamburger-menu div {
+  width: 25px;
+  height: 3px;
+  background-color: #fff;
+  border-radius: 3px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
   .nav-links {
-    flex-direction: column; /* Stack nav items vertically on smaller screens */
-    align-items: flex-start; /* Align items to the start */
+    display: none; /* Hide nav links by default */
+    flex-direction: column; /* Stack nav items vertically */
+    width: 100%;
+  }
+
+  .nav-links.active {
+    display: flex; /* Show nav links when hamburger menu is active */
   }
   
   .user-info {
     margin-bottom: 10px; /* Add space below user info */
   }
-  
+
   .logo img {
-    height: 40
-    px; /* Adjust logo size on smaller screens */
+    height: 30px; /* Adjust logo size on smaller screens */
+  }
+
+  .hamburger-menu {
+    display: flex; /* Show hamburger menu on smaller screens */
   }
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Navbar.css';
 import { toast } from "react-toastify";
 import { Link, useNavigate } from 'react-router-dom';
@@ -6,12 +6,13 @@ import { OTPRequests } from '../../slice/authSlice';
 import { useDispatch } from 'react-redux';
 
 const Navbar = ({ isAuthenticated }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const userInfo = JSON.parse(sessionStorage.getItem("userData"));
-  const userID = userInfo?.userID
+  const userID = userInfo?.userID;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const userName = userInfo?.name || null;
   const userImg = userInfo?.userImg || null;
-  console.log("userName", userName);
 
   const handleOTPRequest = async () => {
     try {
@@ -19,7 +20,7 @@ const Navbar = ({ isAuthenticated }) => {
       console.log("OTP request component", res);
       // navigate("/otp/verify"); 
     } catch (error) {
-      console.error("Error while requesting otp verfiy", error);
+      console.error("Error while requesting otp verify", error);
     }
   };
 
@@ -29,7 +30,7 @@ const Navbar = ({ isAuthenticated }) => {
       toast.success("Logout Successful", {
         autoClose: 3000,
         position: "bottom-right"
-      })
+      });
       navigate("/login");
       window.location.reload();
     } catch (error) {
@@ -37,16 +38,21 @@ const Navbar = ({ isAuthenticated }) => {
       toast.error("Failed to logout", {
         position: "bottom-right",
         autoClose: 3000
-      })
+      });
     }
   };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
     <div className="navbar">
       <div className="logo">
         {/* Placeholder for your logo image */}
         <img src="https://www.shutterstock.com/image-vector/clipboard-tick-marks-cogwheel-symbolising-260nw-784327627.jpg" alt="logo" />
       </div>
-      <div className="nav-links">
+      <div className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
         {isAuthenticated ? (
           <>
             <div className="user-info">
@@ -68,6 +74,9 @@ const Navbar = ({ isAuthenticated }) => {
             </button>
           </>
         )}
+      </div>
+      <div className="hamburger" onClick={toggleMenu}>
+        ☰
       </div>
     </div>
   );
